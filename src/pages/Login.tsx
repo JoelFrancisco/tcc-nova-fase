@@ -1,6 +1,8 @@
+import { useState } from 'react';
 import { CookiesProvider } from 'react-cookie';
 import { ContextWrapper } from '../contexts/State';
 import SearchBar from '../components/SearchBar';
+import axios from 'axios';
 import "typeface-roboto";
 
 import sustentalize1 from '../images/sustentalize1.png';
@@ -9,8 +11,40 @@ import seta from '../images/seta.png';
 
 import '../App.css'
 
+type User = {
+  id: number;
+  email: string;
+  username: string;
+  password: string;
+  session_id: string;
+}
 
-function App() {
+function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+
+  const apiRequestGetUserFromSession = async () => {
+    try { 
+      const res = await axios.get<User>('http://localhost:8080/user/session');
+      setUsername(res.data.username);
+      console.log("FOI2")
+      alert(username);
+      return;
+    } catch (err: any) {
+      throw new Error(err);
+    }
+  }
+
+  const apiRequestLogin = async () => {
+    try { 
+      await axios.post('http://localhost:8080/login', { email, password });
+      console.log("FOI")
+      return;
+    } catch (err: any) {
+      throw new Error(err);
+    }
+  }
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -58,10 +92,28 @@ function App() {
                       LOGIN DE USUÁRIO
                     </div>
 
-                    <div>
-                      <label>AAAAAAAAAAAA</label>
-                      <input type="text" />
+                    <div className="container">
+                      <label>Usuário</label>
+                      <input type="text" onChange={event => {
+                        setEmail(event.target.value);
+                      }}/>
                     </div>
+
+                    <div className="container flex-col justify-around">
+                      <label>Senha</label>
+                      <input type="text" onChange={event => {
+                        setPassword(event.target.value);
+                      }}/>
+                    </div>
+                    
+                    <button onClick={() => {
+                      console.log(email);
+                      console.log(password);
+
+                      apiRequestLogin();
+                      console.log("Realizando segunda chamada")
+                      apiRequestGetUserFromSession();
+                    }}>Login</button>
                 </div>
               </div>
 
@@ -90,4 +142,4 @@ function App() {
   );
 }
 
-export default App;
+export default Login;
