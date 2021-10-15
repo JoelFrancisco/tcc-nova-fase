@@ -38,7 +38,8 @@ function Login() {
 
   const apiRequestLogin = async () => {
     try { 
-      await axios.post('http://localhost:8080/login', { email, password });
+      const res = await axios.post('http://localhost:8080/login', { email, password });
+      
       console.log("FOI")
       return;
     } catch (err: any) {
